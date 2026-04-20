@@ -3,11 +3,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 
-function PokemonDetails() {
+function PokemonDetails({pokemonName}) {
     const {id} = useParams();
     const [pokemon, setPokemon] = useState({});
+    let pokemonIdentifier = pokemonName || id;
     async function downloadPokemon(){
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        
+        try{
+         const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonIdentifier}`);
+        
         setPokemon({
             name: response.data.name,
             image: response.data.sprites.other.dream_world.front_default,
@@ -16,16 +20,20 @@ function PokemonDetails() {
             weight: response.data.weight,
             
         })
+        } catch(error){
+            console.log(error);
+        }        
+        
     }
 
 
 
     useEffect(() => {
         downloadPokemon();
-    }, []);
+    }, [pokemonIdentifier]);
     return (
-        <div>
-            <Link to="/" className="text-[20px] bg-gray-500 text-slate-50 px-2 py-1 rounded-lg hover:bg-slate-600 hover:scale-105 transition-all duration-300 font-bold cursor-pointer mt-4 mb-4">{'<<'} Back</Link>
+        <div className="mt-4">
+            <Link to="/" onClick={() => {setPokemonName("")}} className="text-[20px] bg-gray-500 text-slate-50 px-2 py-1 rounded-lg hover:bg-slate-600 hover:scale-105 transition-all duration-300 font-bold cursor-pointer mt-4 mb-4">{'<<'} Back</Link>
             
             <div className="flex flex-col items-center mt-4 mb-4 md:w-[50vw]    lg:w-[30vw] border border-slate-800 px-2 py-1 h-min-[90vh] w-[95vw] text-center rounded-lg">
               <h1 className="text-2xl font-bold mt-4 mb-4">Pokemon Details</h1>
